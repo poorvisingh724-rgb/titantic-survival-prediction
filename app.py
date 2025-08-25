@@ -25,8 +25,12 @@ y = df["Survived"]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Train model
-model = RandomForestClassifier()
+model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(X_train, y_train)
+
+# Model Accuracy
+acc = model.score(X_test, y_test)
+st.sidebar.write(f"Model Accuracy: {acc:.2f}")
 
 # ---------------- Streamlit App ----------------
 st.title("Titanic Survival Prediction")
@@ -46,7 +50,8 @@ sex = 0 if sex=="male" else 1
 embarked = {"S":0,"C":1,"Q":2}[embarked]
 
 # Prediction
-input_data = [[pclass, sex, age, sibsp, parch, fare, embarked]]
+import numpy as np
+input_data = np.array([[pclass, sex, age, sibsp, parch, fare, embarked]])
 prediction = model.predict(input_data)
 
 if st.button("Predict Survival"):
@@ -54,3 +59,6 @@ if st.button("Predict Survival"):
         st.success("This passenger would have SURVIVED!")
     else:
         st.error(" This passenger would NOT have survived.")
+
+import warnings
+warnings.filterwarnings("ignore")
