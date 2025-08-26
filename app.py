@@ -1,10 +1,13 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
+import warnings
+warnings.filterwarnings("ignore")
 
-# Load dataset directly from GitHub
-df = pd.read_csv("https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv")
+# ----------------- Load Dataset -----------------
+df = pd.read_csv("data/titanic.csv")
 
 # Keep useful columns
 df = df[["Pclass","Sex","Age","SibSp","Parch","Fare","Embarked","Survived"]]
@@ -22,7 +25,9 @@ X = df.drop("Survived", axis=1)
 y = df["Survived"]
 
 # Train-test split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
 
 # Train model
 model = RandomForestClassifier(n_estimators=100, random_state=42)
@@ -30,12 +35,13 @@ model.fit(X_train, y_train)
 
 # Model Accuracy
 acc = model.score(X_test, y_test)
-st.sidebar.write(f"Model Accuracy: {acc:.2f}")
 
-# ---------------- Streamlit App ----------------
-st.title("Titanic Survival Prediction")
+# ----------------- Streamlit App -----------------
+st.title("🚢 Titanic Survival Prediction App")
+st.write("Fill the passenger details in the sidebar to predict survival chances.")
 
-st.sidebar.header("Enter Passenger Details")
+st.sidebar.header("📌 Passenger Details")
+st.sidebar.markdown(f"### 🎯 Model Accuracy: **{acc:.2f}**")
 
 pclass = st.sidebar.selectbox("Passenger Class (1 = 1st, 2 = 2nd, 3 = 3rd)", [1,2,3])
 sex = st.sidebar.selectbox("Sex", ["male","female"])
@@ -50,15 +56,15 @@ sex = 0 if sex=="male" else 1
 embarked = {"S":0,"C":1,"Q":2}[embarked]
 
 # Prediction
-import numpy as np
 input_data = np.array([[pclass, sex, age, sibsp, parch, fare, embarked]])
 prediction = model.predict(input_data)
 
-if st.button("Predict Survival"):
+if st.sidebar.button("🔮 Predict Survival"):
     if prediction[0] == 1:
-        st.success("This passenger would have SURVIVED!")
+        st.success("✅ This passenger would have SURVIVED!")
     else:
-        st.error(" This passenger would NOT have survived.")
+        st.error("❌ This passenger would NOT have survived.")
 
-import warnings
-warnings.filterwarnings("ignore")
+# Footer
+st.markdown("---")
+st.caption("Made with ❤️ by Poorvi")
