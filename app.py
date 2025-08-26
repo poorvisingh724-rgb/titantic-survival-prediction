@@ -7,7 +7,8 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # ----------------- Load Dataset -----------------
-df = pd.read_csv("data/titanic.csv")
+df = pd.read_csv("https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv")
+
 
 # Keep useful columns
 df = df[["Pclass","Sex","Age","SibSp","Parch","Fare","Embarked","Survived"]]
